@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>翻一翻</title>
+</head>
+<body>
+<button>洗牌</button>
+<button>清空</button>
+<button>新增</button>
+<button>删除</button>
+<div class="grid-container">
+    <div class="grid-item">
+        <div class="card">
+            <div class="card-front">Front 1</div>
+            <div class="card-back">Back 1</div>
+        </div>
+    </div>
+    <!-- 其他八个格子类似 -->
+</div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    class Card {
+    constructor(index, text) {
+        this.index = index
+        this.text = text
+    }
+}
+
+const cards = []
+
+function addCard(text) {
+    index = cards.length
+    cards.push(new Card(index, text))
+    // jquery 重绘元素
+}
+
+function clear() {
+    cards = []
+    // jquery 重绘元素
+}
+
+function remove() {
+
+}
+
+function clickCard() {
+    // 先翻开当前，然后延迟0.5秒翻开其他的
+}
+
+function shuffle() {
+
+}
+</script>
+
+</html>
