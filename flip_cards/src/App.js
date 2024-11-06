@@ -1,6 +1,8 @@
-import React, {useState} from 'react';
-import {Button, Card, Col, Flex, Row, Typography} from 'antd';
+import React, { useState } from 'react';
+import { Button, Card, Col, Flex, Row, Typography } from 'antd';
 import 'animate.css';
+import { motion } from 'framer-motion';
+
 
 const containerStyle = {
     width: '100%',
@@ -15,41 +17,135 @@ const buttonStyle = {
     // boxShadow: '25px 25px 50px #474748, -25px -25px 50px #ffffff'
 }
 
-const baseStyle = {
-    width: '25%',
-    height: 54,
+const cardStyle = {
+    width: '100%',
+    height: '100%',
+    // position: 'relative',
+    transition: 'transform 0.6s',
+    transformStyle: 'preserve-3d',
 };
 
+const frontStyle = {
+    // position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backfaceVisibility: 'hidden',
+    backgroundColor: 'lightblue',
+};
 
-class MyCard {
+const backStyle = {
+    // position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backfaceVisibility: 'hidden',
+    backgroundColor: 'lightgreen',
+    transform: 'rotateY(180deg)',
+};
 
-    constructor(index, text) {
-        this.text = text;
-        this.back = true;
-    }
-
-    handleClick() {
-        this.back = !this.back;
-    }
-}
-
-const FlipCard = () => {
+const CardFlip = () => {
     const [isFlipped, setIsFlipped] = useState(false);
 
-    const handleClick = () => {
+    const flipCard = () => {
         setIsFlipped(!isFlipped);
     };
 
     return (
-        <div className="flip-card" onClick={handleClick}>
-            <div className={`flip-card-inner animate__animated ${isFlipped ? 'animate__flipY' : ''}`}>
-                <div className="flip-card-front">Front Side</div>
-                <div className="flip-card-back">Back Side</div>
-            </div>
+        <div onClick={flipCard}>
+            <motion.div
+                style={{
+                    width: 200,
+                    height: 300,
+                    borderRadius: 10,
+                    backgroundColor: "white",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "relative",
+                    cursor: "pointer",
+                    transformStyle: 'preserve-3d'
+                }}
+                animate={{ rotateY: isFlipped ? 180 : 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <motion.div
+                    style={{
+                        position: "absolute",
+                        backfaceVisibility: "hidden",
+                        WebkitBackfaceVisibility: "hidden", // Safari/Chrome等使用的前缀
+                        MozBackfaceVisibility: "hidden", // Firefox使用的前缀
+                    }}
+                >
+                    Front
+                </motion.div>
+                <motion.div
+                    style={{
+                        position: "absolute",
+                        backfaceVisibility: "hidden",
+                        rotateY: 180,
+                        WebkitBackfaceVisibility: "hidden", // Safari/Chrome等使用的前缀
+                        MozBackfaceVisibility: "hidden", // Firefox使用的前缀
+                    }}
+                >
+                    Back
+                </motion.div>
+            </motion.div>
         </div>
     );
 };
 
+const CCard = ({ frontContent, backContent }) => {
+    const [isFlipped, setIsFlipped] = useState(false);
+
+    const handleFlip = () => {
+        setIsFlipped(!isFlipped);
+    };
+
+    return (
+        <motion.div
+            className="card"
+            onClick={handleFlip}
+            animate={{ rotateY: isFlipped ? 180 : 0 }}
+            transition={{ duration: 0.6 }}
+            style={{ backfaceVisibility: 'hidden', transformStyle: 'preserve-3d' }}
+        >
+            <div className="card-front">{`正面` + frontContent}</div>
+            <div className="card-back">{`背面` + backContent}</div>
+        </motion.div>
+    );
+};
+
+const FlipCard = ({ index, text }) => {
+    // isFlipper 正面
+    const [isFlipped, setIsFlipped] = useState(false);
+    const [cardIndex] = useState(index)
+    // const handleClick = () => {
+    //     setIsFlipped(!isFlipped);
+    //     console.log(`index=` + cardIndex)
+    //     console.log(`text=` + text)
+    // };
+
+    const [flippedCards, setFlippedCards] = useState([]);
+
+    const handleClick = (cardIndex) => {
+        if (flippedCards.includes(cardIndex)) {
+            setFlippedCards(flippedCards.filter(index => index !== cardIndex));
+        } else {
+            setFlippedCards([...flippedCards, cardIndex]);
+        }
+    };
+
+    return (
+        <Card className="card" style={{ transform: flippedCards.includes(index) ? 'rotateY(180deg)' : 'none', width: '80%', height: '150px' }} onClick={() => handleClick(index)}>
+            <div style={frontStyle}>Front {index + 1}</div>
+            <div style={backStyle}>Back {index + 1}</div>
+        </Card>
+    );
+};
+
+// todo 完成翻转
+// todo 支持反复点击
+// todo 随机引入字符串
+// todo 部署
 const App = () => {
 
     // ------------------------------
@@ -69,7 +165,7 @@ const App = () => {
     let cards = [];
 
     for (let i = 0; i < texts.length; i++) {
-        cards.push(new MyCard(i, texts[i]));
+        cards.push({ 'index': i, 'text': texts[i] });
     }
 
     const [isAnimating, setIsAnimating] = useState(false);
@@ -77,33 +173,22 @@ const App = () => {
     const handleClick = (card) => {
         setIsAnimating(true);
         setTimeout(() => {
-                setIsAnimating(false);
-            },
+            setIsAnimating(false);
+        },
             1000); // 设置动画持续时间，这里假设动画持续 1 秒，之后恢复初始状态
         // todo 这里的card好像有问题，导致无法正常点击
-        card.handleClick();
+        // card.handleClick();
+        alert(card.index)
     };
 
     const renderCards = () => {
         return (
-            <Flex style={{width: '100%'}} wrap={true} gap={"middle"} justify={"space-evenly"} align={"center"}>
+            <Flex style={{ width: '100%' }} wrap={true} gap={"middle"} justify={"space-evenly"} align={"center"}>
                 {cards.map(item => (
-                    <Flex style={{width: `${90 / itemsPerRow}%`}} key={item}>
-                        <Card
-                            style={{
-                                width: '100%',
-                                height: 200
-                            }}
-                            onClick={handleClick}
-                        >
-
-                            <div className={`animate__animated ${isAnimating ? 'animate__flipInY' : ''}`}
-                                 onClick={handleClick}>
-                                <p hidden={!item.back}>{`正面` + item.text}</p>
-                                <p hidden={item.back}>{`背面` + item.text}</p>
-                            </div>
-
-                        </Card>
+                    <Flex style={{ width: `${90 / itemsPerRow}%` }} key={item}>
+                        {/* <FlipCard index={item.index} text={item.text} /> */}
+                        {/* <CCard frontContent={item.index} backContent={item.text}></CCard> */}
+                        <CardFlip />
                     </Flex>
                 ))}
             </Flex>
@@ -115,13 +200,13 @@ const App = () => {
 
     return (
         <Flex style={containerStyle}>
-            <Flex style={{width: '20%'}}>
-                <div/>
+            <Flex style={{ width: '20%' }}>
+                <div />
             </Flex>
-            <Flex style={{width: '60%'}}>
+            <Flex style={{ width: '60%' }}>
                 {renderCards()}
             </Flex>
-            <Flex style={{width: '20%'}}>
+            <Flex style={{ width: '20%' }}>
                 <Button type="default" shape={"round"} style={buttonStyle}>
                     Get Started
                 </Button>
