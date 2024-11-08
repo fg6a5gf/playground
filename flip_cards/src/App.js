@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Flex, Typography } from 'antd';
 import { motion } from 'framer-motion';
+import { SyncOutlined } from '@ant-design/icons';
+import data from './data'
 
 const backgroundColorStyle = {
     backgroundColor: '#fff'
@@ -52,11 +54,15 @@ const fontStyle = {
     color: 'white',
 }
 
-const CardFlip = ({ index, text, cardBackGrougImage }) => {
-    const [isFlipped, setIsFlipped] = useState(false);
+const CardFlip = ({ index, text, cardBackGrougImage, isFlipped, setItemFlipped }) => {
+
 
     const flipCard = () => {
-        setIsFlipped(!isFlipped);
+        setItemFlipped(prevItems => [
+            ...prevItems.slice(0, index),
+            !prevItems[index],
+            ...prevItems.slice(index + 1),
+        ]);
     };
 
     return (
@@ -64,7 +70,7 @@ const CardFlip = ({ index, text, cardBackGrougImage }) => {
             <motion.div style={{ ...cardContainerStyle }} animate={{ rotateY: isFlipped ? 180 : 0 }} transition={{ duration: 0.6 }}>
                 <motion.div style={{ ...cardBackStyle }} >
                     <Flex align='center' justify='center' style={{ width: '100%', height: '100%' }}>
-                        <img  src={cardBackGrougImage} alt='' border="0" />
+                        <img src={cardBackGrougImage} alt='' border="0" />
                     </Flex>
 
                 </motion.div>
@@ -73,7 +79,7 @@ const CardFlip = ({ index, text, cardBackGrougImage }) => {
                         <Flex style={{ flexGrow: 1, margin: '10px' }}>
                             <Typography.Paragraph style={{ width: '100%', height: '100%' }} strong={true}>
                                 <div style={{ ...fontStyle }}>
-                                    {text}{text}{text}{text}{text}{text}{text}{text}{text}{text}
+                                    {text}
                                 </div>
                             </Typography.Paragraph>
                         </Flex>
@@ -84,70 +90,68 @@ const CardFlip = ({ index, text, cardBackGrougImage }) => {
     );
 };
 
-// todo 随机引入字符串
-// todo 部署
 const App = () => {
+
+    const cardsLength = 8;
+    const itemsPerRow = 4;
 
     // ------------------------------
 
-    // todo 需要一个表单
-    // todo 表单提交前展示空白，提交后统一翻转
-    const texts = [
-        "文本一",
-        "文本二",
-        "文本三",
-        "文本四",
-        "文本五",
-        "文本六",
-        "文本七",
-        "文本八"
-    ]
+    const randomElements = () => {
+        const arr = data.texts || [];
+        const shuffled = arr.slice().sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 8);
+    };
+
+    const [texts, setTexts] = useState(randomElements());
 
     // 图片的背景图
     const cardBackImages = [
-        // 图片系列1
-        // "https://s21.ax1x.com/2024/11/07/pAymTdP.png",
-        // "https://s21.ax1x.com/2024/11/07/pAym4sA.png",
-        // "https://s21.ax1x.com/2024/11/07/pAymoZt.png",
-        // "https://s21.ax1x.com/2024/11/07/pAymqJS.png",
-        // "https://s21.ax1x.com/2024/11/07/pAymhMd.png",
-        // "https://s21.ax1x.com/2024/11/07/pAymWxH.png",
-        // "https://s21.ax1x.com/2024/11/07/pAym5qI.png",
-        // "https://s21.ax1x.com/2024/11/07/pAym7If.png",
-        // "https://s21.ax1x.com/2024/11/07/pAymbi8.png",
-        // 图片系列2
-        // "https://s21.ax1x.com/2024/11/07/pAyt8lq.png",
-        
-        // "https://i.imgur.com/dKaCkUY.png",
         "https://cdn-fusion.imgcdn.store/i/2024/3f5d71cfb3c5f25e.png",
         "https://cdn-fusion.imgcdn.store/i/2024/b3c6a8894fd5a87a.png",
         "https://cdn-fusion.imgcdn.store/i/2024/4252a85b3eb1171d.png",
-        "https://cdn-fusion.imgcdn.store/i/2024/b2dc264f183212a8.png",        
+        "https://cdn-fusion.imgcdn.store/i/2024/b2dc264f183212a8.png",
         "https://cdn-fusion.imgcdn.store/i/2024/ea29a638394b9c36.png",
         "https://cdn-fusion.imgcdn.store/i/2024/f03364d3d0cad380.png",
         "https://cdn-fusion.imgcdn.store/i/2024/e1fb92f355d4b9c8.png",
         "https://cdn-fusion.imgcdn.store/i/2024/5060cb4f46b711ac.png",
     ]
 
-    const itemsPerRow = 4;
-
-    let cards = [];
-    for (let i = 0; i < texts.length; i++) {
+    const cards = [];
+    for (let i = 0; i < cardsLength; i++) {
         cards.push({ 'index': i, 'text': texts[i], 'backGroundImage': cardBackImages[i] });
     }
+
+    const [isFlippedArray, setItemFlipped] = useState([...Array(cardsLength)].map(() => false))
 
     const renderCards = () => {
         return (
             <Flex style={{ width: '100%' }} wrap={true} gap={"middle"} justify={"space-evenly"} align={"center"}>
                 {cards.map(item => (
                     <Flex style={{ width: `${90 / itemsPerRow}%` }} key={item.index}>
-                        <CardFlip index={item.index} text={item.text} cardBackGrougImage={item.backGroundImage} />
+                        <CardFlip
+                            index={item.index}
+                            text={item.text}
+                            cardBackGrougImage={item.backGroundImage}
+                            isFlipped={isFlippedArray[item.index]}
+                            setItemFlipped={setItemFlipped}
+                        />
                     </Flex>
                 ))}
             </Flex>
         )
     };
 
+
+    const [spinned, setSpinned] = useState(false);
+    const syncOnClick = () => {
+        setSpinned(true);
+        setTimeout(() => {
+            setItemFlipped(new Array(cardsLength).fill(false));
+            setTimeout(() => { setTexts(randomElements()) }, 700)
+            setSpinned(false);
+        }, 350);
+    };
 
     // ------------------------------
 
@@ -162,18 +166,7 @@ const App = () => {
                 <Flex style={{ height: '10%', width: '100%' }} ><div /></Flex>
             </Flex>
             <Flex style={{ width: '20%' }}>
-                {/* <Button type="default" shape={"round"} style={buttonStyle}>
-                    Get Started
-                </Button>
-                <Button type="default" shape={"round"} style={buttonStyle}>
-                    Get Started
-                </Button>
-                <Button type="default" shape={"round"} style={buttonStyle}>
-                    Get Started
-                </Button>
-                <Button type="default" shape={"round"} style={buttonStyle}>
-                    Get Started
-                </Button> */}
+                <SyncOutlined onClick={syncOnClick} style={{ fontSize: '22px' }} spin={spinned} />
             </Flex>
         </Flex>
     );
