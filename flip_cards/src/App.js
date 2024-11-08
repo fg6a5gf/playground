@@ -1,48 +1,58 @@
 import React, { useState } from 'react';
-import { Button, Card, Col, Flex, Row, Typography } from 'antd';
-import 'animate.css';
+import { Flex, Typography } from 'antd';
 import { motion } from 'framer-motion';
 
+const backgroundColorStyle = {
+    backgroundColor: '#fff'
+}
 
 const containerStyle = {
+    ...backgroundColorStyle,
     width: '100%',
     height: '100vh',
-    // minHeight: '100%',
-    backgroundColor: '#EBECEF',
 }
 
-const buttonStyle = {
-    // backgroundColor: '#EBECEF',
-    // borderRadius: '30px',
-    // boxShadow: '25px 25px 50px #474748, -25px -25px 50px #ffffff'
-}
-
-const cardStyle = {
-    width: '100%',
-    height: '100%',
-    // position: 'relative',
-    transition: 'transform 0.6s',
+const cardContainerStyle = {
+    backgroundColor: "black",
+    width: 200,
+    height: 300,
+    borderRadius: 10,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    cursor: "pointer",
     transformStyle: 'preserve-3d',
-};
+    // clipPath: 'polygon(0 0, 100% 0, 100% 95%, 0 100%)'
+}
 
-const frontStyle = {
-    // position: 'absolute',
+const cardBackStyle = {
     width: '100%',
     height: '100%',
-    backfaceVisibility: 'hidden',
-    backgroundColor: 'lightblue',
-};
+    position: "absolute",
+    backfaceVisibility: "hidden",
+    WebkitBackfaceVisibility: "hidden", // Safari/Chrome等使用的前缀
+    MozBackfaceVisibility: "hidden", // Firefox使用的前缀
+}
 
-const backStyle = {
-    // position: 'absolute',
+const cardFrontStyle = {
+    position: "absolute",
     width: '100%',
     height: '100%',
-    backfaceVisibility: 'hidden',
-    backgroundColor: 'lightgreen',
-    transform: 'rotateY(180deg)',
-};
+    backfaceVisibility: "hidden",
+    rotateY: 180,
+    WebkitBackfaceVisibility: "hidden", // Safari/Chrome等使用的前缀
+    MozBackfaceVisibility: "hidden", // Firefox使用的前缀
+}
 
-const CardFlip = () => {
+const fontStyle = {
+    fontFamily: '"Microsoft YaHei",Arial,Helvetica,sans-serif, 宋体',
+    fontDisplay: 'swap',
+    fontSize: '20px',
+    color: 'white',
+}
+
+const CardFlip = ({ index, text, cardBackGrougImage }) => {
     const [isFlipped, setIsFlipped] = useState(false);
 
     const flipCard = () => {
@@ -51,106 +61,38 @@ const CardFlip = () => {
 
     return (
         <div onClick={flipCard}>
-            <motion.div
-                style={{
-                    width: 200,
-                    height: 300,
-                    borderRadius: 10,
-                    backgroundColor: "white",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    position: "relative",
-                    cursor: "pointer",
-                    transformStyle: 'preserve-3d'
-                }}
-                animate={{ rotateY: isFlipped ? 180 : 0 }}
-                transition={{ duration: 0.5 }}
-            >
-                <motion.div
-                    style={{
-                        position: "absolute",
-                        backfaceVisibility: "hidden",
-                        WebkitBackfaceVisibility: "hidden", // Safari/Chrome等使用的前缀
-                        MozBackfaceVisibility: "hidden", // Firefox使用的前缀
-                    }}
-                >
-                    Front
+            <motion.div style={{ ...cardContainerStyle }} animate={{ rotateY: isFlipped ? 180 : 0 }} transition={{ duration: 0.6 }}>
+                <motion.div style={{ ...cardBackStyle }} >
+                    <Flex align='center' justify='center' style={{ width: '100%', height: '100%' }}>
+                        <img  src={cardBackGrougImage} alt='' border="0" />
+                    </Flex>
+
                 </motion.div>
-                <motion.div
-                    style={{
-                        position: "absolute",
-                        backfaceVisibility: "hidden",
-                        rotateY: 180,
-                        WebkitBackfaceVisibility: "hidden", // Safari/Chrome等使用的前缀
-                        MozBackfaceVisibility: "hidden", // Firefox使用的前缀
-                    }}
-                >
-                    Back
+                <motion.div style={{ ...cardFrontStyle }} >
+                    <Flex justify='center' align='center' style={{ width: '100%', height: '100%' }} >
+                        <Flex style={{ flexGrow: 1, margin: '10px' }}>
+                            <Typography.Paragraph style={{ width: '100%', height: '100%' }} strong={true}>
+                                <div style={{ ...fontStyle }}>
+                                    {text}{text}{text}{text}{text}{text}{text}{text}{text}{text}
+                                </div>
+                            </Typography.Paragraph>
+                        </Flex>
+                    </Flex>
                 </motion.div>
             </motion.div>
         </div>
     );
 };
 
-const CCard = ({ frontContent, backContent }) => {
-    const [isFlipped, setIsFlipped] = useState(false);
-
-    const handleFlip = () => {
-        setIsFlipped(!isFlipped);
-    };
-
-    return (
-        <motion.div
-            className="card"
-            onClick={handleFlip}
-            animate={{ rotateY: isFlipped ? 180 : 0 }}
-            transition={{ duration: 0.6 }}
-            style={{ backfaceVisibility: 'hidden', transformStyle: 'preserve-3d' }}
-        >
-            <div className="card-front">{`正面` + frontContent}</div>
-            <div className="card-back">{`背面` + backContent}</div>
-        </motion.div>
-    );
-};
-
-const FlipCard = ({ index, text }) => {
-    // isFlipper 正面
-    const [isFlipped, setIsFlipped] = useState(false);
-    const [cardIndex] = useState(index)
-    // const handleClick = () => {
-    //     setIsFlipped(!isFlipped);
-    //     console.log(`index=` + cardIndex)
-    //     console.log(`text=` + text)
-    // };
-
-    const [flippedCards, setFlippedCards] = useState([]);
-
-    const handleClick = (cardIndex) => {
-        if (flippedCards.includes(cardIndex)) {
-            setFlippedCards(flippedCards.filter(index => index !== cardIndex));
-        } else {
-            setFlippedCards([...flippedCards, cardIndex]);
-        }
-    };
-
-    return (
-        <Card className="card" style={{ transform: flippedCards.includes(index) ? 'rotateY(180deg)' : 'none', width: '80%', height: '150px' }} onClick={() => handleClick(index)}>
-            <div style={frontStyle}>Front {index + 1}</div>
-            <div style={backStyle}>Back {index + 1}</div>
-        </Card>
-    );
-};
-
-// todo 完成翻转
-// todo 支持反复点击
 // todo 随机引入字符串
 // todo 部署
 const App = () => {
 
     // ------------------------------
 
-    let texts = [
+    // todo 需要一个表单
+    // todo 表单提交前展示空白，提交后统一翻转
+    const texts = [
         "文本一",
         "文本二",
         "文本三",
@@ -161,34 +103,45 @@ const App = () => {
         "文本八"
     ]
 
+    // 图片的背景图
+    const cardBackImages = [
+        // 图片系列1
+        // "https://s21.ax1x.com/2024/11/07/pAymTdP.png",
+        // "https://s21.ax1x.com/2024/11/07/pAym4sA.png",
+        // "https://s21.ax1x.com/2024/11/07/pAymoZt.png",
+        // "https://s21.ax1x.com/2024/11/07/pAymqJS.png",
+        // "https://s21.ax1x.com/2024/11/07/pAymhMd.png",
+        // "https://s21.ax1x.com/2024/11/07/pAymWxH.png",
+        // "https://s21.ax1x.com/2024/11/07/pAym5qI.png",
+        // "https://s21.ax1x.com/2024/11/07/pAym7If.png",
+        // "https://s21.ax1x.com/2024/11/07/pAymbi8.png",
+        // 图片系列2
+        // "https://s21.ax1x.com/2024/11/07/pAyt8lq.png",
+        
+        // "https://i.imgur.com/dKaCkUY.png",
+        "https://cdn-fusion.imgcdn.store/i/2024/3f5d71cfb3c5f25e.png",
+        "https://cdn-fusion.imgcdn.store/i/2024/b3c6a8894fd5a87a.png",
+        "https://cdn-fusion.imgcdn.store/i/2024/4252a85b3eb1171d.png",
+        "https://cdn-fusion.imgcdn.store/i/2024/b2dc264f183212a8.png",        
+        "https://cdn-fusion.imgcdn.store/i/2024/ea29a638394b9c36.png",
+        "https://cdn-fusion.imgcdn.store/i/2024/f03364d3d0cad380.png",
+        "https://cdn-fusion.imgcdn.store/i/2024/e1fb92f355d4b9c8.png",
+        "https://cdn-fusion.imgcdn.store/i/2024/5060cb4f46b711ac.png",
+    ]
+
     const itemsPerRow = 4;
+
     let cards = [];
-
     for (let i = 0; i < texts.length; i++) {
-        cards.push({ 'index': i, 'text': texts[i] });
+        cards.push({ 'index': i, 'text': texts[i], 'backGroundImage': cardBackImages[i] });
     }
-
-    const [isAnimating, setIsAnimating] = useState(false);
-
-    const handleClick = (card) => {
-        setIsAnimating(true);
-        setTimeout(() => {
-            setIsAnimating(false);
-        },
-            1000); // 设置动画持续时间，这里假设动画持续 1 秒，之后恢复初始状态
-        // todo 这里的card好像有问题，导致无法正常点击
-        // card.handleClick();
-        alert(card.index)
-    };
 
     const renderCards = () => {
         return (
             <Flex style={{ width: '100%' }} wrap={true} gap={"middle"} justify={"space-evenly"} align={"center"}>
                 {cards.map(item => (
-                    <Flex style={{ width: `${90 / itemsPerRow}%` }} key={item}>
-                        {/* <FlipCard index={item.index} text={item.text} /> */}
-                        {/* <CCard frontContent={item.index} backContent={item.text}></CCard> */}
-                        <CardFlip />
+                    <Flex style={{ width: `${90 / itemsPerRow}%` }} key={item.index}>
+                        <CardFlip index={item.index} text={item.text} cardBackGrougImage={item.backGroundImage} />
                     </Flex>
                 ))}
             </Flex>
@@ -203,11 +156,13 @@ const App = () => {
             <Flex style={{ width: '20%' }}>
                 <div />
             </Flex>
-            <Flex style={{ width: '60%' }}>
-                {renderCards()}
+            <Flex style={{ width: '60%' }} vertical={true}>
+                <Flex style={{ height: '10%', width: '100%' }} ><div /></Flex>
+                <Flex style={{ height: '80%' }} >{renderCards()}</Flex>
+                <Flex style={{ height: '10%', width: '100%' }} ><div /></Flex>
             </Flex>
             <Flex style={{ width: '20%' }}>
-                <Button type="default" shape={"round"} style={buttonStyle}>
+                {/* <Button type="default" shape={"round"} style={buttonStyle}>
                     Get Started
                 </Button>
                 <Button type="default" shape={"round"} style={buttonStyle}>
@@ -218,7 +173,7 @@ const App = () => {
                 </Button>
                 <Button type="default" shape={"round"} style={buttonStyle}>
                     Get Started
-                </Button>
+                </Button> */}
             </Flex>
         </Flex>
     );
