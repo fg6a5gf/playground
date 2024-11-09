@@ -41,7 +41,7 @@ const App = () => {
             flatCards.push({ 'index': i, 'text': flatTexts[i] });
         }
         return (
-            <Flex vertical={true} style={{ width: '80%', overflowY: "auto", flexGrow: 1}} justify='space-between'>
+            <Flex vertical={true} style={{  overflowY: "auto", flexGrow: 1 }} justify='space-between'>
                 {
                     flatCards.map(item => (
                         <FlatFlipCard
@@ -53,7 +53,6 @@ const App = () => {
                     ))
                 }
             </Flex>
-
         )
     }
 
@@ -121,10 +120,10 @@ const App = () => {
                 <div></div>
             </Flex>
             <Flex style={{ width: '60%' }} vertical={true}>
-                <Flex style={{ height: '30%', width: '100%' }} >
+                <Flex style={{ height: '30%', width: '100%' }}>
                     {renderFlatCards()}
                 </Flex>
-                <Flex style={{ height: '70%', margin:'15px'}}>{renderCards()}</Flex>
+                <Flex style={{ height: '70%', margin: '15px' }}>{renderCards()}</Flex>
             </Flex>
             <Flex vertical={true} style={{ width: '20%' }}>
                 <Flex style={{ height: '30%' }}>

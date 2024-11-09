@@ -54,7 +54,6 @@ const FlatFlipCard = ({ index, text, isFlipped, setItemFlipped }) => {
                     </Flex>
                 </motion.div>
                 <motion.div style={{ ...cardFrontStyle }} >
-                    {/* 搞不清楚为什么需要这个marginLeft，but it just works */}
                     <Flex align={'center'} style={{ ...fontStyle, marginLeft: '10px' }}>
                             {text}
                         </Flex>

@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 
 const cardContainerStyle = {
     backgroundColor: "black",
-    width: '100%',
-    height: 300,
+    width: '300px',
+    height: '400px',
     borderRadius: 10,
     display: "flex",
     justifyContent: "center",
