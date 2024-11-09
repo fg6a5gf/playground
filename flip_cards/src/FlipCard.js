@@ -37,7 +37,7 @@ const cardFrontStyle = {
 const fontStyle = {
     fontFamily: '"Microsoft YaHei",Arial,Helvetica,sans-serif, 宋体',
     fontDisplay: 'swap',
-    fontSize: '36px',
+    fontSize: '46px',
     color: 'white',
 }
 

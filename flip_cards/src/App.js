@@ -41,19 +41,17 @@ const App = () => {
             flatCards.push({ 'index': i, 'text': flatTexts[i] });
         }
         return (
-            <Flex style={{ width: '100%' }} justify='center'>
-                <Flex vertical={true} style={{ width: '90%', background: 'black' }} >
-                    {
-                        flatCards.map(item => (
-                            <FlatFlipCard
-                                index={item.index}
-                                text={item.text}
-                                isFlipped={isFlatFlippedArray[item.index]}
-                                setItemFlipped={setFlatItemFlipped}
-                            />
-                        ))
-                    }
-                </Flex>
+            <Flex vertical={true} style={{ width: '80%', overflowY: "auto", flexGrow: 1}} justify='space-between'>
+                {
+                    flatCards.map(item => (
+                        <FlatFlipCard
+                            index={item.index}
+                            text={item.text}
+                            isFlipped={isFlatFlippedArray[item.index]}
+                            setItemFlipped={setFlatItemFlipped}
+                        />
+                    ))
+                }
             </Flex>
 
         )
@@ -105,6 +103,16 @@ const App = () => {
         }, 350);
     };
 
+    const [flatSpinned, setFlatSpinned] = useState(false);
+    const flatSyncOnClick = () => {
+        setFlatSpinned(true);
+        setTimeout(() => {
+            setFlatItemFlipped(new Array(flatCardsLength).fill(false));
+            setTimeout(() => { setFlatTexts(randomElements(data.flatTexts, flatCardsLength)) }, 700)
+            setFlatSpinned(false);
+        }, 350);
+    };
+
     // ------------------------------
 
     return (
@@ -116,10 +124,15 @@ const App = () => {
                 <Flex style={{ height: '30%', width: '100%' }} >
                     {renderFlatCards()}
                 </Flex>
-                <Flex style={{ height: '70%', border: "2px solid black" }}>{renderCards()}</Flex>
+                <Flex style={{ height: '70%', margin:'15px'}}>{renderCards()}</Flex>
             </Flex>
-            <Flex style={{ width: '20%' }}>
-                <SyncOutlined onClick={syncOnClick} style={{ fontSize: '22px' }} spin={spinned} />
+            <Flex vertical={true} style={{ width: '20%' }}>
+                <Flex style={{ height: '30%' }}>
+                    <SyncOutlined onClick={flatSyncOnClick} style={{ fontSize: '22px' }} spin={flatSpinned} />
+                </Flex>
+                <Flex style={{ height: '70%' }}>
+                    <SyncOutlined onClick={syncOnClick} style={{ fontSize: '22px' }} spin={spinned} />
+                </Flex>
             </Flex>
         </Flex>
     );
